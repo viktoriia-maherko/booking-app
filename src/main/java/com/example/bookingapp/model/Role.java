@@ -23,6 +23,6 @@ public class Role {
     private RoleName roleName;
 
     public enum RoleName {
-        ADMIN, USER
+        ROLE_ADMIN, ROLE_USER
     }
 }
