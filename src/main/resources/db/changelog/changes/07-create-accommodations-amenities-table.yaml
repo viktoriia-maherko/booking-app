@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-accommodations-amenities-table
+      author: victoria
+      changes:
+        - createTable:
+            tableName: accommodations_amenities
+            columns:
+              - column:
+                  name: accommodation_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: index
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amenities
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
