@@ -12,6 +12,7 @@ import com.example.bookingapp.service.AccommodationService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,8 +32,8 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public List<AccommodationResponseDto> getAll() {
-        return accommodationRepository.findAll()
+    public List<AccommodationResponseDto> getAll(Pageable pageable) {
+        return accommodationRepository.findAll(pageable)
                 .stream()
                 .filter(accommodation -> accommodation.getAvailability() > 0)
                 .map(accommodationMapper::toDto)

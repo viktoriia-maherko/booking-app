@@ -17,4 +17,8 @@ public interface UserService {
     UserResponseDto getProfile();
 
     UserResponseDto updateProfile(UserUpdateRequestDto requestDto);
+
+    boolean existsById(Long id);
+
+    User getAuthenticatedUserIfExists();
 }
