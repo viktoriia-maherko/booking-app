@@ -11,7 +11,6 @@ import com.example.bookingapp.model.User;
 import com.example.bookingapp.repository.accommodation.AccommodationRepository;
 import com.example.bookingapp.repository.booking.BookingRepository;
 import com.example.bookingapp.service.BookingService;
-import com.example.bookingapp.service.NotificationService;
 import com.example.bookingapp.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
@@ -28,7 +27,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
     private final UserService userService;
     private final AccommodationRepository accommodationRepository;
-    private final NotificationService notificationService;
 
     @Override
     public BookingResponseDto save(CreateBookingRequestDto requestDto) {
@@ -43,9 +41,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setUser(userService.getAuthenticatedUserIfExists());
         booking.setAccommodation(accommodation);
         Booking savedBooking = bookingRepository.save(booking);
-        BookingResponseDto responseDto = bookingMapper.toDto(savedBooking);
-        notificationService.notifyCreationNewBooking(responseDto);
-        return responseDto;
+        return bookingMapper.toDto(savedBooking);
     }
 
     @Override
@@ -96,7 +92,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void deleteById(Long id) {
-        notificationService.notifyCancellationBooking(id);
         bookingRepository.deleteById(id);
     }
 
