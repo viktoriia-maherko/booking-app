@@ -9,6 +9,7 @@ import com.example.bookingapp.model.Address;
 import com.example.bookingapp.repository.accommodation.AccommodationRepository;
 import com.example.bookingapp.repository.accommodation.AddressRepository;
 import com.example.bookingapp.service.AccommodationService;
+import com.example.bookingapp.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final AddressRepository addressRepository;
     private final AccommodationMapper accommodationMapper;
+    private final NotificationService notificationService;
 
     @Override
     public AccommodationResponseDto save(CreateAccommodationRequestDto requestDto) {
@@ -28,7 +30,9 @@ public class AccommodationServiceImpl implements AccommodationService {
         Address savedAddress = addressRepository.save(accommodation.getAddress());
         accommodation.setAddress(savedAddress);
         Accommodation savedAccommodation = accommodationRepository.save(accommodation);
-        return accommodationMapper.toDto(savedAccommodation);
+        AccommodationResponseDto responseDto = accommodationMapper.toDto(savedAccommodation);
+        notificationService.notifyCreationNewAccommodation(responseDto);
+        return responseDto;
     }
 
     @Override
@@ -64,6 +68,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public void deleteById(Long id) {
+        notificationService.notifyCancellationAccommodation(id);
         accommodationRepository.deleteById(id);
     }
 }
