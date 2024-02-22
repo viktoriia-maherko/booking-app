@@ -38,8 +38,8 @@ public class TelegramNotificationService implements NotificationService {
     }
 
     @Override
-    public void notifySuccessfulPayment() {
-        String message = "Payment successful. Payment details: "; // toDo(add PaymentResponseDto
+    public void notifySuccessfulPayment(Long paymentId) {
+        String message = "Payment successful. Payment ID: " + paymentId;
         notificationBot.sendNotification(message);
     }
 }

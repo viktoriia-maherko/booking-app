@@ -7,7 +7,7 @@ import com.example.bookingapp.dto.user.UserUpdateRequestDto;
 import com.example.bookingapp.exception.RegistrationException;
 import com.example.bookingapp.mapper.UserMapper;
 import com.example.bookingapp.model.User;
-import com.example.bookingapp.repository.user.UserRepository;
+import com.example.bookingapp.repository.UserRepository;
 import com.example.bookingapp.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;

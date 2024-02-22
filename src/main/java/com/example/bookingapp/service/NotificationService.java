@@ -12,5 +12,5 @@ public interface NotificationService {
 
     void notifyCancellationAccommodation(Long id);
 
-    void notifySuccessfulPayment(/*toDo(add PaymentResponseDto)*/);
+    void notifySuccessfulPayment(Long paymentId);
 }
