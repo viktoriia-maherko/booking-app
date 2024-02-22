@@ -1,7 +1,7 @@
 package com.example.bookingapp.security;
 
 import com.example.bookingapp.exception.EntityNotFoundException;
-import com.example.bookingapp.repository.user.UserRepository;
+import com.example.bookingapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

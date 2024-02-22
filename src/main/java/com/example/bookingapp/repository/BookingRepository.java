@@ -1,4 +1,4 @@
-package com.example.bookingapp.repository.booking;
+package com.example.bookingapp.repository;
 
 import com.example.bookingapp.model.Booking;
 import java.time.LocalDate;
