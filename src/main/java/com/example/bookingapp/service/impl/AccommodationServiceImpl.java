@@ -3,6 +3,7 @@ package com.example.bookingapp.service.impl;
 import com.example.bookingapp.dto.accommodation.AccommodationResponseDto;
 import com.example.bookingapp.dto.accommodation.AccommodationUpdateRequestDto;
 import com.example.bookingapp.dto.accommodation.CreateAccommodationRequestDto;
+import com.example.bookingapp.exception.EntityNotFoundException;
 import com.example.bookingapp.mapper.AccommodationMapper;
 import com.example.bookingapp.model.Accommodation;
 import com.example.bookingapp.model.Address;
@@ -10,7 +11,6 @@ import com.example.bookingapp.repository.AccommodationRepository;
 import com.example.bookingapp.repository.AddressRepository;
 import com.example.bookingapp.service.AccommodationService;
 import com.example.bookingapp.service.NotificationService;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -68,7 +68,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public void deleteById(Long id) {
-        notificationService.notifyCancellationAccommodation(id);
         accommodationRepository.deleteById(id);
+        notificationService.notifyCancellationAccommodation(id);
     }
 }

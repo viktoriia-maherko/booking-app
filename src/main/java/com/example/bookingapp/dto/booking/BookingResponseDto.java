@@ -1,11 +1,14 @@
 package com.example.bookingapp.dto.booking;
 
 import java.time.LocalDate;
+import lombok.Data;
 
-public record BookingResponseDto(LocalDate checkInDate,
-        LocalDate checkOutDate,
-        Long accommodationId,
-        Long userId,
-        String status) {
+@Data
+public class BookingResponseDto {
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
+    private Long accommodationId;
+    private Long userId;
+    private String status;
 
 }
