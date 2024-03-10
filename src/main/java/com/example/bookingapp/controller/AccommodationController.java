@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccommodationController {
     private final AccommodationService accommodationService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     @Operation(summary = "Create a new accommodation",

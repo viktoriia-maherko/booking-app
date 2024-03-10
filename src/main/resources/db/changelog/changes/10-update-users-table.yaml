@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-users-table
+      author: victoria
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: chat_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    unique: true
