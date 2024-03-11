@@ -31,7 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookingController {
     private final BookingService bookingService;
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     @Operation(summary = "Create a new booking",
             description = "Create a new booking")
@@ -51,7 +52,7 @@ public class BookingController {
         return bookingService.getBookingsByUserIdAndStatus(userId, status, pageable);
     }
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/my")
     @Operation(summary = "Get bookings", description = "Get a list of current user's bookings")
     public List<BookingResponseDto> getBookingsOfCurrentUser(Pageable pageable) {

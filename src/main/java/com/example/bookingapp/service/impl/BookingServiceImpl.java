@@ -4,6 +4,7 @@ import com.example.bookingapp.dto.booking.BookingResponseDto;
 import com.example.bookingapp.dto.booking.CreateBookingRequestDto;
 import com.example.bookingapp.dto.booking.UpdateBookingRequestDto;
 import com.example.bookingapp.exception.DataProcessingException;
+import com.example.bookingapp.exception.EntityNotFoundException;
 import com.example.bookingapp.mapper.BookingMapper;
 import com.example.bookingapp.model.Accommodation;
 import com.example.bookingapp.model.Booking;
@@ -13,9 +14,7 @@ import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.service.BookingService;
 import com.example.bookingapp.service.NotificationService;
 import com.example.bookingapp.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +35,14 @@ public class BookingServiceImpl implements BookingService {
                 .findById(requestDto.getAccommodationId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find an accommodation by id "
                         + requestDto.getAccommodationId()));
+        if (requestDto.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new DataProcessingException("The check-in date must be in the future");
+        }
+        if (requestDto.getCheckOutDate().isBefore(requestDto.getCheckInDate())) {
+            throw new DataProcessingException(
+                    "The check-out date must be later than the check-in date"
+            );
+        }
         checkAvailabilityAndDateOfBooking(
                 requestDto.getCheckInDate(), requestDto.getCheckOutDate(), accommodation
         );
@@ -118,14 +125,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private List<Booking> checkStatus(List<Booking> bookings) {
-        List<Booking> bookingWithPendingStatus = new ArrayList<>();
-
-        for (Booking booking : bookings) {
-            if (booking != null && (booking.getStatus().equals(Booking.Status.PENDING)
-                    || booking.getStatus().equals(Booking.Status.CONFIRMED))) {
-                bookingWithPendingStatus.add(booking);
-            }
-        }
-        return bookingWithPendingStatus;
+        return bookings.stream()
+                .filter(booking ->
+                        booking.getStatus().equals(Booking.Status.PENDING)
+                                || booking.getStatus().equals(Booking.Status.CONFIRMED))
+                .toList();
     }
 }
