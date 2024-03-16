@@ -105,7 +105,7 @@ class BookingControllerTest {
         }
     }
 
-    @WithMockUser(username = "bob@gmail.com", roles = {"USER"})
+    @WithMockUser(username = "bob@gmail.com")
     @Test
     @DisplayName("Create a new booking")
     void createBooking_ValidRequestDto_Success() throws Exception {
@@ -140,7 +140,7 @@ class BookingControllerTest {
                 .andReturn();
     }
 
-    @WithMockUser(username = "bob@gmail.com", roles = {"USER"})
+    @WithMockUser(username = "bob@gmail.com")
     @Test
     @DisplayName("Get bookings of current user")
     void getBookingsOfCurrentUser_ReturnsListOfBookings() throws Exception {
@@ -167,7 +167,7 @@ class BookingControllerTest {
                 .andReturn();
     }
 
-    @WithMockUser(username = "bob@gmail.com", roles = {"USER"})
+    @WithMockUser(username = "bob@gmail.com")
     @Test
     @DisplayName("Update a booking by id")
     void updateById_ValidBookingId_ReturnsUpdatedBookingDto() throws Exception {

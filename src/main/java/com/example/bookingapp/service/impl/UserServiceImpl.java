@@ -4,11 +4,15 @@ import com.example.bookingapp.dto.user.RoleUpdateRequestDto;
 import com.example.bookingapp.dto.user.UserRegistrationRequestDto;
 import com.example.bookingapp.dto.user.UserResponseDto;
 import com.example.bookingapp.dto.user.UserUpdateRequestDto;
+import com.example.bookingapp.exception.EntityNotFoundException;
 import com.example.bookingapp.exception.RegistrationException;
 import com.example.bookingapp.mapper.UserMapper;
+import com.example.bookingapp.model.Role;
 import com.example.bookingapp.model.User;
+import com.example.bookingapp.repository.RoleRepository;
 import com.example.bookingapp.repository.UserRepository;
 import com.example.bookingapp.service.UserService;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
@@ -37,29 +42,28 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
-    }
-
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User with such email doesn't exist")
-        );
+        return userMapper.toDto(savedUser);
     }
 
     @Override
     public UserResponseDto updateRoleById(Long id, RoleUpdateRequestDto requestDto) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("User with such email doesn't exist")
-        );
-        user.setRoles(Set.of(requestDto.role()));
-        User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User with id "
+                        + id + " not found"));
+
+        Role newRole = roleRepository.findByRoleName(requestDto.getRoleNames());
+        Set<Role> userRoles = new HashSet<>(user.getRoles());
+        userRoles.add(newRole);
+
+        user.setRoles(userRoles);
+
+        User updatedUser = userRepository.save(user);
+        return userMapper.toDto(updatedUser);
     }
 
     @Override
     public UserResponseDto getProfile() {
-        return userMapper.toUserResponse(getAuthenticatedUserIfExists());
+        return userMapper.toDto(getAuthenticatedUserIfExists());
     }
 
     @Override
@@ -70,7 +74,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(requestDto.getEmail());
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
+        return userMapper.toDto(savedUser);
     }
 
     @Override
@@ -82,14 +86,10 @@ public class UserServiceImpl implements UserService {
     public User getAuthenticatedUserIfExists() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
-            try {
-                throw new RegistrationException("Can't find authenticated user");
-            } catch (RegistrationException e) {
-                throw new RuntimeException(e);
-            }
+            throw new RegistrationException("Can't find authenticated user");
         }
-        return userRepository.findByEmail(authentication.getName()).orElseThrow(()
-                -> new RuntimeException("User with email "
-                + authentication.getName() + " doesn't exist"));
+        return userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RegistrationException("User with email "
+                        + authentication.getName() + " doesn't exist"));
     }
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping(value = "/{id}/role")
     @Operation(summary = "Update a role", description = "Update a role of user by user id")
     @ResponseStatus(HttpStatus.OK)
@@ -31,7 +31,7 @@ public class UserController {
         return userService.updateRoleById(id, requestDto);
     }
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/me")
     @Operation(summary = "Get a profile", description = "Get a current user's profile")
     @ResponseStatus(HttpStatus.OK)
@@ -39,7 +39,7 @@ public class UserController {
         return userService.getProfile();
     }
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping(value = "/me")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a profile", description = "Update a current user's profile")
