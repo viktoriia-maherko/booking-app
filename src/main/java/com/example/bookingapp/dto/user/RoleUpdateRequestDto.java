@@ -1,6 +1,11 @@
 package com.example.bookingapp.dto.user;
 
 import com.example.bookingapp.model.Role;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
-public record RoleUpdateRequestDto(Role role) {
+@Data
+public class RoleUpdateRequestDto {
+    @NotNull
+    private Role.RoleName roleNames;
 }
