@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,7 +83,8 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    void login() throws Exception {
+    @DisplayName("Verify user authentication")
+    void login_ValidCredentials_ReturnsUserLoginResponseDto() throws Exception {
         UserLoginRequestDto requestDto = new UserLoginRequestDto("bob@gmail.com", "password12345");
 
         when(authenticationService.authenticate(any(UserLoginRequestDto.class)))
@@ -98,7 +100,8 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    void loginWithInvalidCredentials() throws Exception {
+    @DisplayName("Verify authentication fails with invalid data")
+    void login_InvalidCredentials_ReturnsStatusIsBadRequest() throws Exception {
         UserLoginRequestDto requestDto = new UserLoginRequestDto(
                 "invalid_email@gmail.com", "invalid_password"
         );
@@ -110,7 +113,8 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    void register() throws Exception {
+    @DisplayName("Verify user registration")
+    void register_ValidCredentials_ReturnsUserResponseDto() throws Exception {
         UserRegistrationRequestDto requestDto = new UserRegistrationRequestDto();
         requestDto.setEmail("alice@gmail.com");
         requestDto.setFirstName("Alice");
@@ -135,11 +139,10 @@ class AuthenticationControllerTest {
     }
 
     @Test
+    @DisplayName("Verify registration fails with invalid data")
     void registerWithInvalidData() throws Exception {
         UserRegistrationRequestDto requestDto = new UserRegistrationRequestDto();
         requestDto.setEmail("bob@gmail.com");
-        // Додайте інші неправильні дані для реєстрації
-
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
