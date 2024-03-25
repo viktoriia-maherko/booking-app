@@ -37,10 +37,10 @@ class BookingControllerTest {
     private static final Long USER_ID = 1L;
     private static final Long ACCOMMODATION_ID = 1L;
     private static final Long BOOKING_ID = 1L;
-    private static final LocalDate BOOKING_CHECK_IN = LocalDate.of(2024, 3, 18);
-    private static final LocalDate BOOKING_CHECK_OUT = LocalDate.of(2024, 3, 25);
-    private static final LocalDate UPDATE_BOOKING_CHECK_IN = LocalDate.of(2024, 4, 18);
-    private static final LocalDate UPDATE_BOOKING_CHECK_OUT = LocalDate.of(2024, 4, 25);
+    private static final LocalDate BOOKING_CHECK_IN = LocalDate.of(2025, 3, 18);
+    private static final LocalDate BOOKING_CHECK_OUT = LocalDate.of(2025, 3, 25);
+    private static final LocalDate UPDATE_BOOKING_CHECK_IN = LocalDate.of(2025, 4, 18);
+    private static final LocalDate UPDATE_BOOKING_CHECK_OUT = LocalDate.of(2025, 4, 25);
 
     @Autowired
     private ObjectMapper objectMapper;

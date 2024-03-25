@@ -9,6 +9,5 @@ import org.mapstruct.Mapping;
 @Mapper(config = MapperConfig.class)
 public interface PaymentMapper {
     @Mapping(source = "booking.id", target = "bookingId")
-    @Mapping(target = "paymentUrl", ignore = true)
     PaymentResponseDto toDto(Payment payment);
 }

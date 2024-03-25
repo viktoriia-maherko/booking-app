@@ -40,8 +40,8 @@ class BookingRepositoryTest {
     )
     void findAllBetweenCheckInDateAndCheckOutDate_ValidDate_ReturnsABooking() {
         List<Booking> actual = bookingRepository
-                .findAllBetweenCheckInDateAndCheckOutDate(LocalDate.of(2024, 3, 18),
-                LocalDate.of(2024, 3, 25), 1L);
+                .findAllBetweenCheckInDateAndCheckOutDate(LocalDate.of(2025, 3, 18),
+                LocalDate.of(2025, 3, 25), 1L);
         assertEquals(1, actual.size());
     }
 
@@ -67,6 +67,6 @@ class BookingRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
         List<Booking> actual = bookingRepository.findAllByUserId(1L, pageable);
         assertEquals(1, actual.size());
-        assertEquals(LocalDate.of(2024, 3, 18), actual.get(0).getCheckInDate());
+        assertEquals(LocalDate.of(2025, 3, 18), actual.get(0).getCheckInDate());
     }
 }

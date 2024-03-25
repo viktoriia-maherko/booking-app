@@ -30,39 +30,31 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("status", HttpStatus.BAD_REQUEST);
         List<String> errors = ex.getBindingResult().getAllErrors()
                 .stream()
-                .map(this::getErrorsMessage)
+                .map(this::getErrorMessage)
                 .toList();
         body.put("errors", errors);
         return new ResponseEntity<>(body, headers, status);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFoundException(
-            EntityNotFoundException ex,
-            HttpHeaders headers,
-            HttpStatusCode status
-    ) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND);
-        body.put("errors", ex.getMessage());
-        return new ResponseEntity<>(body, headers, status);
+    public ResponseEntity<Object> handleEntityNotFoundException(Exception ex) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex);
     }
 
     @ExceptionHandler(RegistrationException.class)
-    protected ResponseEntity<Object> handleRegistrationException(
-            EntityNotFoundException ex,
-            HttpHeaders headers,
-            HttpStatusCode status
-    ) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT);
-        body.put("errors", ex.getMessage());
-        return new ResponseEntity<>(body, headers, status);
+    public ResponseEntity<Object> handleRegistrationException(Exception ex) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex);
     }
 
-    private String getErrorsMessage(ObjectError e) {
+    private ResponseEntity<Object> buildErrorResponse(HttpStatus status, Exception exception) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status);
+        body.put("errors", exception.getMessage());
+        return new ResponseEntity<>(body, status);
+    }
+
+    private String getErrorMessage(ObjectError e) {
         if (e instanceof FieldError) {
             String field = ((FieldError) e).getField();
             String message = e.getDefaultMessage();

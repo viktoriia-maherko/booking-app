@@ -10,12 +10,15 @@ import jakarta.validation.Valid;
 import java.net.MalformedURLException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Payment management", description = "Endpoints for managing payments")
@@ -26,6 +29,7 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final StripePaymentService stripePaymentService;
 
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/{userId}")
     @Operation(summary = "Get payment information",
@@ -45,21 +49,21 @@ public class PaymentController {
         return stripePaymentService.createPaymentSession(requestDto);
     }
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/success")
     @Operation(summary = "Handles successful payment",
             description = "Handles successful payment processing through Stripe redirection")
-    public String success(String sessionId) {
+    public String success(@RequestParam("sessionId") String sessionId) {
         paymentService.success(sessionId);
         return "The payment was successful. Session ID: " + sessionId;
     }
 
-    @PreAuthorize("hasAnyRole()('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/cancel")
     @Operation(summary = " Manages payment cancellation",
             description = "Manages payment cancellation and returns "
                     + "payment paused messages during Stripe redirection")
-    public String cancel(String sessionId) {
+    public String cancel(@RequestParam("sessionId") String sessionId) {
         paymentService.cancel(sessionId);
         return "Payment cancelled. You can try again later. "
                 + "Session available for 24 hours. Session ID: " + sessionId;

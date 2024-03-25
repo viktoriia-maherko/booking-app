@@ -37,6 +37,10 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(Payment.Status.PAID);
         paymentRepository.save(payment);
         Booking booking = payment.getBooking();
+        if (booking == null) {
+            throw new EntityNotFoundException("Booking not found for payment with session id "
+                    + sessionId);
+        }
         booking.setStatus(Booking.Status.CONFIRMED);
         bookingRepository.save(booking);
         notificationService.notifySuccessfulPayment(payment.getId());
@@ -50,6 +54,10 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(Payment.Status.CANCELED);
         paymentRepository.save(payment);
         Booking booking = payment.getBooking();
+        if (booking == null) {
+            throw new EntityNotFoundException("Booking not found for payment with session id "
+                    + sessionId);
+        }
         booking.setStatus(Booking.Status.CANCELED);
         bookingRepository.save(booking);
     }
