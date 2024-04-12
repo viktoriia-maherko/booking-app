@@ -1,11 +1,11 @@
 package com.example.bookingapp.dto.user;
 
-import com.example.bookingapp.model.Role;
 import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import lombok.Data;
 
 @Data
 public class RoleUpdateRequestDto {
     @NotNull
-    private Role.RoleName roleNames;
+    private Set<String> roleNames;
 }

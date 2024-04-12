@@ -13,4 +13,6 @@ public interface NotificationService {
     void notifyCancellationAccommodation(Long id);
 
     void notifySuccessfulPayment(Long paymentId);
+
+    void sendTelegramNotification(String notificationMessage);
 }

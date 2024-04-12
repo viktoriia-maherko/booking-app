@@ -10,5 +10,4 @@ databaseChangeLog:
                   name: chat_id
                   type: bigint
                   constraints:
-                    nullable: false
                     unique: true

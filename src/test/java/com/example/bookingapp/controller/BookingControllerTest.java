@@ -37,6 +37,8 @@ class BookingControllerTest {
     private static final Long USER_ID = 1L;
     private static final Long ACCOMMODATION_ID = 1L;
     private static final Long BOOKING_ID = 1L;
+    private static final LocalDate CREATE_CHECK_IN = LocalDate.of(2024, 10, 1);
+    private static final LocalDate CREATE_CHECK_OUT = LocalDate.of(2024, 10, 10);
     private static final LocalDate BOOKING_CHECK_IN = LocalDate.of(2025, 3, 18);
     private static final LocalDate BOOKING_CHECK_OUT = LocalDate.of(2025, 3, 25);
     private static final LocalDate UPDATE_BOOKING_CHECK_IN = LocalDate.of(2025, 4, 18);
@@ -110,15 +112,14 @@ class BookingControllerTest {
     @DisplayName("Create a new booking")
     void createBooking_ValidRequestDto_Success() throws Exception {
         String jsonRequest = objectMapper.writeValueAsString(createBookingRequestDto());
-
         mockMvc.perform(
                         post("/bookings")
                                 .content(jsonRequest)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.checkInDate").value(BOOKING_CHECK_IN.toString()))
-                .andExpect(jsonPath("$.checkOutDate").value(BOOKING_CHECK_OUT.toString()))
+                .andExpect(jsonPath("$.checkInDate").value(CREATE_CHECK_IN.toString()))
+                .andExpect(jsonPath("$.checkOutDate").value(CREATE_CHECK_OUT.toString()))
                 .andExpect(jsonPath("$.accommodationId").value(ACCOMMODATION_ID))
                 .andExpect(jsonPath("$.userId").value(USER_ID))
                 .andReturn();
@@ -204,8 +205,8 @@ class BookingControllerTest {
     private CreateBookingRequestDto createBookingRequestDto() {
         CreateBookingRequestDto createBookingRequestDto = new CreateBookingRequestDto();
         createBookingRequestDto.setAccommodationId(ACCOMMODATION_ID);
-        createBookingRequestDto.setCheckInDate(BOOKING_CHECK_IN);
-        createBookingRequestDto.setCheckOutDate(BOOKING_CHECK_OUT);
+        createBookingRequestDto.setCheckInDate(CREATE_CHECK_IN);
+        createBookingRequestDto.setCheckOutDate(CREATE_CHECK_OUT);
         return createBookingRequestDto;
     }
 }

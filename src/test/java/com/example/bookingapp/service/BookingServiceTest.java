@@ -25,6 +25,7 @@ import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.service.impl.BookingServiceImpl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,10 +45,10 @@ import org.springframework.data.domain.Pageable;
 class BookingServiceTest {
     private static final Long USER_ID = 1L;
     private static final Long ACCOMMODATION_ID = 1L;
-    private static final LocalDate BOOKING_CHECK_IN = LocalDate.of(2025, 3, 18);
-    private static final LocalDate BOOKING_CHECK_OUT = LocalDate.of(2025, 3, 25);
-    private static final LocalDate UPDATE_BOOKING_CHECK_IN = LocalDate.of(2025, 4, 18);
-    private static final LocalDate UPDATE_BOOKING_CHECK_OUT = LocalDate.of(2025, 4, 25);
+    private static final LocalDate BOOKING_CHECK_IN = LocalDate.now();
+    private static final LocalDate BOOKING_CHECK_OUT = LocalDate.now().plusDays(1);
+    private static final LocalDate UPDATE_BOOKING_CHECK_IN = LocalDate.now().plusWeeks(1);
+    private static final LocalDate UPDATE_BOOKING_CHECK_OUT = LocalDate.now().plusWeeks(2);
     @Mock
     private AccommodationRepository accommodationRepository;
     @Mock
@@ -73,7 +74,7 @@ class BookingServiceTest {
                 .thenReturn(Optional.of(createAccommodation1()));
         when(bookingRepository.findAllBetweenCheckInDateAndCheckOutDate(
                 BOOKING_CHECK_IN, BOOKING_CHECK_OUT, ACCOMMODATION_ID
-        )).thenReturn(List.of(booking));
+        )).thenReturn(Collections.emptyList());
         when(bookingMapper.toModel(createBookingRequestDto)).thenReturn(booking);
         when(bookingRepository.save(booking)).thenReturn(booking);
         when(bookingMapper.toDto(booking)).thenReturn(expected);

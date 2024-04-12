@@ -2,9 +2,11 @@ package com.example.bookingapp.controller;
 
 import com.example.bookingapp.dto.user.RoleUpdateRequestDto;
 import com.example.bookingapp.dto.user.UserResponseDto;
+import com.example.bookingapp.dto.user.UserResponseDtoWithRoles;
 import com.example.bookingapp.dto.user.UserUpdateRequestDto;
 import com.example.bookingapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,12 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}/role")
     @Operation(summary = "Update a role", description = "Update a role of user by user id")
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto updateRoleById(@PathVariable Long id,
-                                          @RequestBody RoleUpdateRequestDto requestDto) {
+    public UserResponseDtoWithRoles updateRoleById(@PathVariable Long id,
+                                                   @RequestBody @Valid RoleUpdateRequestDto
+                                                           requestDto) {
         return userService.updateRoleById(id, requestDto);
     }
 

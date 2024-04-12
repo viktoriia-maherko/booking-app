@@ -58,4 +58,9 @@ public class TelegramNotificationService implements NotificationService {
         String message = "Payment successful. Payment ID: " + paymentId;
         notificationBot.sendNotification(message, adminChatId);
     }
+
+    @Override
+    public void sendTelegramNotification(String notificationMessage) {
+        notificationBot.sendNotification(notificationMessage, adminChatId);
+    }
 }

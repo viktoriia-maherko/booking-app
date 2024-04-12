@@ -39,7 +39,7 @@ public class AccommodationController {
         return accommodationService.save(requestDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("permitAll()")
     @GetMapping
     @Operation(summary = "Get all accommodations",
             description = "Get a list of all available accommodations")
@@ -47,7 +47,7 @@ public class AccommodationController {
         return accommodationService.getAll(pageable);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/{id}")
     @Operation(summary = "Get an accommodation",
             description = "Get an accommodation by id")

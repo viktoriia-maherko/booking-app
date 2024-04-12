@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import com.example.bookingapp.dto.user.RoleUpdateRequestDto;
 import com.example.bookingapp.dto.user.UserRegistrationRequestDto;
 import com.example.bookingapp.dto.user.UserResponseDto;
+import com.example.bookingapp.dto.user.UserResponseDtoWithRoles;
 import com.example.bookingapp.dto.user.UserUpdateRequestDto;
 import com.example.bookingapp.exception.RegistrationException;
 import com.example.bookingapp.mapper.UserMapper;
@@ -80,17 +81,20 @@ class UserServiceTest {
         updatedRole.setId(1L);
         updatedRole.setRoleName(Role.RoleName.ROLE_USER);
         RoleUpdateRequestDto requestDto = new RoleUpdateRequestDto();
-        requestDto.setRoleNames(updatedRole.getRoleName());
+        requestDto.setRoleNames(Set.of(updatedRole.getRoleName().name()));
+        UserResponseDtoWithRoles expected = new UserResponseDtoWithRoles();
+        expected.setEmail("bob@gmail.com");
+        expected.setFirstName("Bob");
+        expected.setLastName("Smith");
+        expected.setRoleNames(Set.of(updatedRole.getRoleName().name()));
         User user = createUser();
 
-        UserResponseDto expected = createUserResponseDto();
-
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(roleRepository.findByRoleName(any())).thenReturn(updatedRole);
+        when(roleRepository.findByRoleNameIn(any())).thenReturn(Set.of(updatedRole));
         doReturn(user).when(userRepository).save(any(User.class));
-        when(userMapper.toDto(user)).thenReturn(expected);
+        when(userMapper.toDtoWithRoles(user)).thenReturn(expected);
 
-        UserResponseDto actual = userService.updateRoleById(user.getId(), requestDto);
+        UserResponseDtoWithRoles actual = userService.updateRoleById(user.getId(), requestDto);
 
         assertEquals(expected, actual);
         assertNotNull(actual);
