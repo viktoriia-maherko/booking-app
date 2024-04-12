@@ -13,12 +13,16 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.net.URL;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
 @Entity
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Table(name = "payments")
 public class Payment {
     @Id

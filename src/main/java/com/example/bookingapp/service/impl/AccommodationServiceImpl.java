@@ -27,7 +27,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public AccommodationResponseDto save(CreateAccommodationRequestDto requestDto) {
         Accommodation accommodation = accommodationMapper.toModel(requestDto);
-        Address savedAddress = addressRepository.save(accommodation.getAddress());
+        Address savedAddress = addressRepository.save(requestDto.getAddress());
         accommodation.setAddress(savedAddress);
         Accommodation savedAccommodation = accommodationRepository.save(accommodation);
         AccommodationResponseDto responseDto = accommodationMapper.toDto(savedAccommodation);
