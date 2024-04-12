@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,7 +44,7 @@ public class BookingServiceImpl implements BookingService {
                     "The check-out date must be later than the check-in date"
             );
         }
-        checkAvailabilityAndDateOfBooking(
+        checkAvailabilityAndOverlap(
                 requestDto.getCheckInDate(), requestDto.getCheckOutDate(), accommodation
         );
         Booking booking = bookingMapper.toModel(requestDto);
@@ -91,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDto updateById(Long id, UpdateBookingRequestDto requestDto) {
         Booking booking = bookingRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException("Can't find a booking by id " + id));
-        checkAvailabilityAndDateOfBooking(
+        checkAvailabilityAndOverlap(
                 requestDto.checkInDate(), requestDto.checkOutDate(), booking.getAccommodation()
         );
         booking.setCheckInDate(requestDto.checkInDate());
@@ -107,28 +108,57 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.deleteById(id);
     }
 
-    private void checkAvailabilityAndDateOfBooking(LocalDate checkInDate,
-                                                      LocalDate checkOutDate,
-                                                      Accommodation accommodation) {
-        List<Booking> bookings = bookingRepository
-                .findAllBetweenCheckInDateAndCheckOutDate(checkInDate,
-                        checkOutDate, accommodation.getId());
-        List<Booking> goodBookings = checkStatus(bookings);
-        boolean checkAvailability = accommodation
-                .getAvailability() - goodBookings.size() > 0;
-        if (!bookings.isEmpty() && !checkAvailability) {
-            throw new DataProcessingException(
-                    "There are no available bookings in the interval from "
-                    + checkInDate + " to " + checkOutDate
+    @Scheduled(cron = "0 0 0 * * *")
+    public void processExpiredBookings() {
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+
+        List<Booking> expiredBookings = bookingRepository.findExpiredBookings(tomorrow);
+
+        if (!expiredBookings.isEmpty()) {
+            for (Booking booking : expiredBookings) {
+                booking.setStatus(Booking.Status.EXPIRED);
+                bookingRepository.save(booking);
+
+                Accommodation accommodation = booking.getAccommodation();
+                BookingResponseDto bookingDto = bookingMapper.toDto(booking);
+
+                String notificationMessage = "Booking for accommodation with ID "
+                        + accommodation.getId()
+                        + " is expired. Details: " + bookingDto.toString();
+                notificationService.sendTelegramNotification(notificationMessage);
+            }
+        } else {
+            notificationService.sendTelegramNotification(
+                    "There are no expired bookings for today!"
             );
         }
     }
 
-    private List<Booking> checkStatus(List<Booking> bookings) {
-        return bookings.stream()
-                .filter(booking ->
-                        booking.getStatus().equals(Booking.Status.PENDING)
-                                || booking.getStatus().equals(Booking.Status.CONFIRMED))
-                .toList();
+    private void checkAvailabilityAndOverlap(LocalDate checkInDate,
+                                             LocalDate checkOutDate,
+                                             Accommodation accommodation) {
+        List<Booking> bookings = bookingRepository
+                .findAllBetweenCheckInDateAndCheckOutDate(checkInDate,
+                        checkOutDate,
+                        accommodation.getId());
+        boolean checkAvailability = accommodation.getAvailability() - bookings.size() > 0;
+        if (!checkAvailability) {
+            throw new DataProcessingException(
+                    "There are no available bookings for this accommodation in the interval from "
+                            + checkInDate + " to " + checkOutDate
+            );
+        }
+
+        boolean overlapExists = bookings.stream()
+                .filter(booking -> booking.getStatus() != Booking.Status.CANCELED)
+                .anyMatch(booking ->
+                        (checkInDate.isBefore(booking.getCheckOutDate()) && checkOutDate
+                                .isAfter(booking.getCheckInDate()))
+                );
+
+        if (overlapExists) {
+            throw new DataProcessingException("Selected dates overlap with existing booking");
+        }
     }
 }

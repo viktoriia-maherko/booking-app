@@ -3,6 +3,7 @@ package com.example.bookingapp.service.impl;
 import com.example.bookingapp.dto.user.RoleUpdateRequestDto;
 import com.example.bookingapp.dto.user.UserRegistrationRequestDto;
 import com.example.bookingapp.dto.user.UserResponseDto;
+import com.example.bookingapp.dto.user.UserResponseDtoWithRoles;
 import com.example.bookingapp.dto.user.UserUpdateRequestDto;
 import com.example.bookingapp.exception.EntityNotFoundException;
 import com.example.bookingapp.exception.RegistrationException;
@@ -12,7 +13,6 @@ import com.example.bookingapp.model.User;
 import com.example.bookingapp.repository.RoleRepository;
 import com.example.bookingapp.repository.UserRepository;
 import com.example.bookingapp.service.UserService;
-import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -46,19 +46,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto updateRoleById(Long id, RoleUpdateRequestDto requestDto) {
+    public UserResponseDtoWithRoles updateRoleById(Long id, RoleUpdateRequestDto requestDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User with id "
                         + id + " not found"));
 
-        Role newRole = roleRepository.findByRoleName(requestDto.getRoleNames());
-        Set<Role> userRoles = new HashSet<>(user.getRoles());
-        userRoles.add(newRole);
+        Set<Role> roles = roleRepository.findByRoleNameIn(requestDto.getRoleNames());
 
-        user.setRoles(userRoles);
+        user.setRoles(roles);
 
         User updatedUser = userRepository.save(user);
-        return userMapper.toDto(updatedUser);
+        return userMapper.toDtoWithRoles(updatedUser);
     }
 
     @Override

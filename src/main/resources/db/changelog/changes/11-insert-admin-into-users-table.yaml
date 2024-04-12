@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert_admin_into_users_table
+      author: victoria
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: email
+                  value: admin@gmail.com
+              - column:
+                  name: first_name
+                  value: Alice
+              - column:
+                  name: last_name
+                  value: Alison
+              - column:
+                  name: password
+                  value: $2a$10$kF.FXgKAyQ1ubyEiBJGbmugjFnM.pDfB4wXrDJ3.Sxl.dwO4lmgba
+              - column:
+                  name: chat_id
+                  value: 688539935

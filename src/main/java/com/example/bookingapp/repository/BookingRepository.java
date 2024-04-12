@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -26,4 +27,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>,
 
     @Query("FROM Booking b WHERE b.user.id = :id")
     List<Booking> findAllByUserId(Long id, Pageable pageable);
+
+    @Query("SELECT b FROM Booking b WHERE b.checkOutDate <= :tomorrow")
+    List<Booking> findExpiredBookings(@Param("tomorrow") LocalDate tomorrow);
 }
